@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { vocabN3 } from '../data/vocab-n3';
 import { vocabN2 } from '../data/vocab-n2';
 import { vocabN1 } from '../data/vocab-n1';
@@ -14,12 +14,18 @@ const Quiz = () => {
   const [quizStarted, setQuizStarted] = useState(false);
   const [streak, setStreak] = useState(0);
   const [bestStreak, setBestStreak] = useState(0);
+  const [quizCount, setQuizCount] = useState(0);
 
   const allVocab = {
     n3: vocabN3,
     n2: vocabN2,
     n1: vocabN1,
   };
+
+  useEffect(() => {
+    const saved = JSON.parse(localStorage.getItem('nihongo_progress') || '{}');
+    setBestStreak(saved.bestStreak || 0);
+  }, []);
 
   const generateQuestions = () => {
     const vocab = allVocab[level];
@@ -55,6 +61,7 @@ const Quiz = () => {
     setShowFeedback(false);
     setQuizStarted(true);
     setStreak(0);
+    setQuizCount(c => c + 1);
   };
 
   const handleOptionClick = (option) => {
@@ -64,30 +71,55 @@ const Quiz = () => {
     setShowFeedback(true);
     
     if (option === questions[currentQuestion].correct) {
-      setScore(score + 1);
+      setScore(s => s + 1);
       setStreak(prev => {
         const newStreak = prev + 1;
-        if (newStreak > bestStreak) setBestStreak(newStreak);
+        if (newStreak > bestStreak) {
+          setBestStreak(newStreak);
+          const saved = JSON.parse(localStorage.getItem('nihongo_progress') || '{}');
+          saved.bestStreak = newStreak;
+          localStorage.setItem('nihongo_progress', JSON.stringify(saved));
+        }
         return newStreak;
       });
     } else {
-      setWrong(wrong + 1);
+      setWrong(w => w + 1);
       setStreak(0);
     }
   };
 
   const handleNext = () => {
     if (currentQuestion < questions.length - 1) {
-      setCurrentQuestion(currentQuestion + 1);
+      setCurrentQuestion(q => q + 1);
       setSelectedOption(null);
       setShowFeedback(false);
     } else {
       setQuizStarted(false);
+      saveQuizResult();
     }
+  };
+
+  const saveQuizResult = () => {
+    const saved = JSON.parse(localStorage.getItem('nihongo_progress') || '{}');
+    saved.totalStudied = (saved.totalStudied || 0) + score + wrong;
+    saved.correctAnswers = (saved.correctAnswers || 0) + score;
+    saved.wrongAnswers = (saved.wrongAnswers || 0) + wrong;
+    saved.lastStudied = new Date().toLocaleDateString();
+    localStorage.setItem('nihongo_progress', JSON.stringify(saved));
   };
 
   const progress = ((currentQuestion + 1) / questions.length) * 100;
   const accuracy = score + wrong > 0 ? Math.round((score / (score + wrong)) * 100) : 0;
+
+  const speak = (text) => {
+    if ('speechSynthesis' in window) {
+      window.speechSynthesis.cancel();
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.lang = 'ja-JP';
+      utterance.rate = 0.8;
+      window.speechSynthesis.speak(utterance);
+    }
+  };
 
   if (!quizStarted) {
     return (
@@ -97,6 +129,15 @@ const Quiz = () => {
         </div>
         
         <div className="quiz-card" style={{ textAlign: 'center' }}>
+          {quizCount > 0 && (
+            <div style={{ marginBottom: '24px' }}>
+              <h3>Last Quiz</h3>
+              <p style={{ fontSize: '1.25rem' }}>
+                Score: {score}/{questions.length} ({accuracy}%)
+              </p>
+            </div>
+          )}
+          
           <h2 style={{ marginBottom: '24px' }}>Test Your Knowledge</h2>
           <p style={{ color: '#757575', marginBottom: '32px' }}>
             10 questions • Multiple choice • Instant feedback
@@ -154,7 +195,16 @@ const Quiz = () => {
 
       <div className="quiz-card">
         <div className="quiz-question">
-          <div className="quiz-kana">{q.kana}</div>
+          <div className="quiz-kana">
+            {q.kana}
+            <button 
+              className="audio-btn" 
+              onClick={() => speak(q.kana)}
+              style={{ marginLeft: '12px', fontSize: '1rem' }}
+            >
+              🔊
+            </button>
+          </div>
           <div className="quiz-kanji">{q.kanji}</div>
         </div>
 

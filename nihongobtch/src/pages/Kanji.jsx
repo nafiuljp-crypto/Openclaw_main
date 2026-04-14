@@ -11,6 +11,7 @@ const Kanji = () => {
   const [userInput, setUserInput] = useState('');
   const [feedback, setFeedback] = useState(null);
   const [studied, setStudied] = useState(0);
+  const [searchTerm, setSearchTerm] = useState('');
 
   const kanjiData = {
     n3: kanjiN3,
@@ -19,14 +20,22 @@ const Kanji = () => {
   };
 
   useEffect(() => {
-    const data = kanjiData[level] || kanjiN3;
+    let data = kanjiData[level] || kanjiN3;
+    if (searchTerm) {
+      data = data.filter(k => 
+        k.character.includes(searchTerm) || 
+        k.meaning.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        k.onyomi.includes(searchTerm) ||
+        k.kunyomi.includes(searchTerm)
+      );
+    }
     const shuffled = [...data].sort(() => Math.random() - 0.5);
     setKanji(shuffled);
     setCurrentIndex(0);
     setShowAnswer(false);
     setUserInput('');
     setFeedback(null);
-  }, [level]);
+  }, [level, searchTerm]);
 
   const current = kanji[currentIndex];
 
@@ -57,7 +66,7 @@ const Kanji = () => {
 
   const handleNext = () => {
     if (currentIndex < kanji.length - 1) {
-      setCurrentIndex(currentIndex + 1);
+      setCurrentIndex(prev => prev + 1);
       setShowAnswer(false);
       setUserInput('');
       setFeedback(null);
@@ -80,22 +89,32 @@ const Kanji = () => {
     <div className="kanji-page">
       <div className="kanji-header">
         <h1>✏️ Kanji Practice</h1>
-        <select 
-          className="level-select" 
-          value={level} 
-          onChange={(e) => setLevel(e.target.value)}
-        >
-          <option value="n3">JLPT N3</option>
-          <option value="n2">JLPT N2</option>
-          <option value="n1">JLPT N1</option>
-        </select>
+        <div style={{ display: 'flex', gap: '12px', alignItems: 'center', flexWrap: 'wrap' }}>
+          <input
+            type="text"
+            placeholder="Search kanji..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="search-input"
+            style={{ padding: '8px 12px', borderRadius: '8px', border: '1px solid var(--border)' }}
+          />
+          <select 
+            className="level-select" 
+            value={level} 
+            onChange={(e) => setLevel(e.target.value)}
+          >
+            <option value="n3">JLPT N3</option>
+            <option value="n2">JLPT N2</option>
+            <option value="n1">JLPT N1</option>
+          </select>
+        </div>
       </div>
 
       <p className="progress-info">
         Kanji {currentIndex + 1} of {kanji.length} • Studied: {studied}
       </p>
 
-      {current && (
+      {current ? (
         <>
           <div className="kanji-card">
             <div className="kanji-character">
@@ -173,6 +192,11 @@ const Kanji = () => {
             )}
           </div>
         </>
+      ) : (
+        <div className="quiz-card" style={{ textAlign: 'center', padding: '40px' }}>
+          <h3>No kanji found</h3>
+          <p style={{ color: '#757575' }}>Try a different search term</p>
+        </div>
       )}
     </div>
   );
