@@ -9,12 +9,15 @@ const Navbar = () => {
     <nav className="navbar">
       <button 
         className="dark-toggle" 
+        id="theme-toggle"
         onClick={() => {
           const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
           document.documentElement.setAttribute('data-theme', isDark ? 'light' : 'dark');
           localStorage.setItem('theme', isDark ? 'light' : 'dark');
+          document.getElementById('theme-toggle').textContent = isDark ? '🌙' : '☀️';
         }}
         style={{ marginLeft: 'auto', background: 'none', border: 'none', cursor: 'pointer', fontSize: '1.2rem' }}
+        title="Toggle dark mode"
       >
         🌙
       </button>

@@ -1,5 +1,6 @@
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { HashRouter as Router, Routes, Route } from 'react-router-dom';
 import Navbar from './components/Navbar';
+import Footer from './components/Footer';
 import Home from './pages/Home';
 import Flashcards from './pages/Flashcards';
 import Quiz from './pages/Quiz';
@@ -20,6 +21,7 @@ function App() {
             <Route path="/progress" element={<Progress />} />
           </Routes>
         </main>
+        <Footer />
       </div>
     </Router>
   );

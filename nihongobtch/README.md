@@ -1,16 +1,60 @@
-# React + Vite
+# Nihongo BTCH - JLPT Japanese Learning App
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+🇯🇵 Interactive Japanese language learning platform for JLPT N3 to N1 levels.
 
-Currently, two official plugins are available:
+## Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+- **📚 Flashcards** - Study vocabulary with spaced repetition
+- **📝 Quizzes** - Test your knowledge with multiple choice
+- **✏️ Kanji Practice** - Learn and practice kanji readings
+- **📊 Progress Tracking** - Track your learning progress
+- **🌙 Dark Mode** - Easy on the eyes studying at night
+- **🔊 Audio Support** - Text-to-speech pronunciation
+- **⌨️ Keyboard Shortcuts** - Navigate efficiently (Space to flip, arrows to move)
+- **🔍 Search** - Find specific vocabulary or kanji
 
-## React Compiler
+## Live Demo
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+**https://nafiuljp-crypto.github.io/nihongobtch/**
 
-## Expanding the ESLint configuration
+## Tech Stack
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+- React + Vite
+- React Router
+- CSS Variables (Dark mode support)
+- Web Speech API (Text-to-speech)
+- localStorage (Progress persistence)
+
+## Getting Started
+
+```bash
+# Install dependencies
+npm install
+
+# Development server
+npm run dev
+
+# Build for production
+npm run build
+```
+
+## Keyboard Shortcuts
+
+### Flashcards
+- **Space** - Flip card
+- **D** - Mark as "Good"
+- **A** - Mark as "Wrong"
+- **→** / **←** - Navigate cards
+
+### Global
+- **🌙/☀️** button in navbar - Toggle dark mode
+
+## JLPT Levels
+
+- **N3** - Intermediate (~500 vocabulary, 300 kanji)
+- **N2** - Pre-Advanced (~500 vocabulary, 300 kanji)
+- **N1** - Advanced (~500 vocabulary, 200 kanji)
+
+## License
+
+MIT
