@@ -12,6 +12,8 @@ const Quiz = () => {
   const [selectedOption, setSelectedOption] = useState(null);
   const [showFeedback, setShowFeedback] = useState(false);
   const [quizStarted, setQuizStarted] = useState(false);
+  const [streak, setStreak] = useState(0);
+  const [bestStreak, setBestStreak] = useState(0);
 
   const allVocab = {
     n3: vocabN3,
@@ -38,6 +40,8 @@ const Quiz = () => {
         correct: word.meaning,
         options,
         romaji: word.romaji,
+        exampleJa: word.exampleJa,
+        exampleEn: word.exampleEn,
       };
     });
   };
@@ -50,6 +54,7 @@ const Quiz = () => {
     setSelectedOption(null);
     setShowFeedback(false);
     setQuizStarted(true);
+    setStreak(0);
   };
 
   const handleOptionClick = (option) => {
@@ -60,8 +65,14 @@ const Quiz = () => {
     
     if (option === questions[currentQuestion].correct) {
       setScore(score + 1);
+      setStreak(prev => {
+        const newStreak = prev + 1;
+        if (newStreak > bestStreak) setBestStreak(newStreak);
+        return newStreak;
+      });
     } else {
       setWrong(wrong + 1);
+      setStreak(0);
     }
   };
 
@@ -76,6 +87,7 @@ const Quiz = () => {
   };
 
   const progress = ((currentQuestion + 1) / questions.length) * 100;
+  const accuracy = score + wrong > 0 ? Math.round((score / (score + wrong)) * 100) : 0;
 
   if (!quizStarted) {
     return (
@@ -129,6 +141,10 @@ const Quiz = () => {
             <div className="quiz-stat-value" style={{ color: '#E53935' }}>{wrong}</div>
             <div className="quiz-stat-label">Wrong</div>
           </div>
+          <div className="quiz-stat">
+            <div className="quiz-stat-value" style={{ color: '#FF9800' }}>🔥 {streak}</div>
+            <div className="quiz-stat-label">Streak</div>
+          </div>
         </div>
       </div>
 
@@ -161,6 +177,12 @@ const Quiz = () => {
             <div style={{ fontSize: '0.9rem', marginTop: '8px', opacity: 0.8 }}>
               {q.romaji}
             </div>
+            {q.exampleJa && (
+              <div style={{ marginTop: '12px', padding: '12px', background: 'var(--bg-secondary)', borderRadius: '8px', textAlign: 'left' }}>
+                <div style={{ fontSize: '1rem', marginBottom: '4px' }}>{q.exampleJa}</div>
+                <div style={{ fontSize: '0.85rem', opacity: 0.7 }}>{q.exampleEn}</div>
+              </div>
+            )}
           </div>
         )}
 

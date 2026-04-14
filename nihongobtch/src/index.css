@@ -12,6 +12,24 @@
   --success: #43A047;
   --error: #E53935;
   --warning: #FB8C00;
+  --bg-secondary: #F5F5F5;
+  --accent: #E53935;
+}
+
+[data-theme="dark"] {
+  --primary: #EF5350;
+  --primary-dark: #C62828;
+  --secondary: #42A5F5;
+  --background: #121212;
+  --surface: #1E1E1E;
+  --text-primary: #FFFFFF;
+  --text-secondary: #B0B0B0;
+  --border: #333333;
+  --success: #66BB6A;
+  --error: #EF5350;
+  --warning: #FFA726;
+  --bg-secondary: #2D2D2D;
+  --accent: #EF5350;
 }
 
 * {
@@ -20,6 +38,9 @@
   box-sizing: border-box;
 }
 
+body {
+  transition: background-color 0.3s, color 0.3s;
+}
 body {
   font-family: 'Noto Sans JP', -apple-system, BlinkMacSystemFont, sans-serif;
   background: var(--background);
@@ -339,6 +360,26 @@ body {
   opacity: 0.7;
 }
 
+.audio-btn {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: var(--bg-secondary);
+  border: none;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  font-size: 1.2rem;
+  cursor: pointer;
+  opacity: 0.8;
+  transition: all 0.2s;
+}
+
+.audio-btn:hover {
+  opacity: 1;
+  transform: scale(1.1);
+}
+
 .flashcard-meaning {
   font-size: 1.75rem;
   font-weight: 600;
@@ -359,6 +400,28 @@ body {
   background: var(--background);
   padding: 4px 12px;
   border-radius: 20px;
+  margin-bottom: 12px;
+}
+
+.flashcard-example {
+  background: var(--bg-secondary);
+  border-radius: 12px;
+  padding: 12px;
+  margin-top: 16px;
+  border-left: 3px solid var(--accent);
+  text-align: left;
+}
+
+.flashcard-example-jp {
+  font-size: 1rem;
+  color: var(--text-primary);
+  margin-bottom: 6px;
+}
+
+.flashcard-example-en {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  font-style: italic;
 }
 
 .flashcard-actions {
@@ -773,6 +836,66 @@ body {
 }
 
 /* Animations */
+
+.greeting {
+  font-size: 1.25rem;
+  color: var(--accent);
+  margin-bottom: 8px;
+}
+
+.user-stats {
+  display: flex;
+  justify-content: center;
+  gap: 32px;
+  margin-bottom: 24px;
+  padding: 16px;
+  background: var(--surface);
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.user-stat {
+  text-align: center;
+}
+
+.user-stat .stat-value {
+  display: block;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--primary);
+}
+
+.user-stat .stat-label {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+}
+
+.daily-tip {
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+  color: white;
+  padding: 24px;
+  border-radius: 16px;
+  text-align: center;
+  margin-top: 32px;
+}
+
+.tip-label {
+  font-size: 0.9rem;
+  opacity: 0.9;
+  margin-bottom: 8px;
+}
+
+.tip-jp {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.tip-en {
+  font-size: 1rem;
+  opacity: 0.9;
+}
+
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(20px); }
   to { opacity: 1; transform: translateY(0); }
@@ -793,4 +916,89 @@ body {
   .quiz-options { grid-template-columns: 1fr; }
   .kanji-character { font-size: 7rem; }
   .level-progress-grid { grid-template-columns: 1fr; }
+}
+/* Loading states */
+.loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 200px;
+}
+
+.loading-spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid var(--border);
+  border-top-color: var(--primary);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Card hover effects */
+.flashcard-container:hover .flashcard,
+.kanji-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 24px rgba(0,0,0,0.15);
+}
+
+/* Level card hover */
+.level-card:hover {
+  transform: translateY(-6px) scale(1.02);
+}
+
+/* Smooth transitions for buttons */
+.btn {
+  transition: all 0.2s ease;
+}
+
+.btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+}
+
+.btn:active {
+  transform: translateY(0);
+}
+
+/* Quiz option hover */
+.quiz-option:not(.disabled):hover {
+  background: var(--primary);
+  color: white;
+  transform: scale(1.02);
+}
+
+/* Better input focus */
+input:focus {
+  border-color: var(--primary) !important;
+  box-shadow: 0 0 0 3px rgba(229, 57, 53, 0.2) !important;
+}
+
+/* Progress bar animation */
+.progress-bar-fill {
+  transition: width 0.5s ease;
+}
+
+/* Staggered fade-in for cards */
+.level-card {
+  animation: fadeInUp 0.5s ease forwards;
+  opacity: 0;
+}
+
+.level-card.n3 { animation-delay: 0.1s; }
+.level-card.n2 { animation-delay: 0.2s; }
+.level-card.n1 { animation-delay: 0.3s; }
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }

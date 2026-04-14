@@ -10,6 +10,7 @@ const Kanji = () => {
   const [showAnswer, setShowAnswer] = useState(false);
   const [userInput, setUserInput] = useState('');
   const [feedback, setFeedback] = useState(null);
+  const [studied, setStudied] = useState(0);
 
   const kanjiData = {
     n3: kanjiN3,
@@ -29,14 +30,26 @@ const Kanji = () => {
 
   const current = kanji[currentIndex];
 
+  const speak = (text) => {
+    if ('speechSynthesis' in window) {
+      window.speechSynthesis.cancel();
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.lang = 'ja-JP';
+      utterance.rate = 0.6;
+      window.speechSynthesis.speak(utterance);
+    }
+  };
+
   const checkAnswer = () => {
     if (!current) return;
     
     const correct = current.kunyomi.split('、')[0];
     const input = userInput.trim().toLowerCase();
+    const onyomiCorrect = current.onyomi.split('、')[0].toLowerCase();
     
-    if (input === correct.toLowerCase() || input === current.onyomi.split('、')[0].toLowerCase()) {
+    if (input === correct.toLowerCase() || input === onyomiCorrect) {
       setFeedback('correct');
+      setStudied(s => s + 1);
     } else {
       setFeedback('incorrect');
     }
@@ -49,7 +62,6 @@ const Kanji = () => {
       setUserInput('');
       setFeedback(null);
     } else {
-      // Reset
       const shuffled = [...kanji].sort(() => Math.random() - 0.5);
       setKanji(shuffled);
       setCurrentIndex(0);
@@ -80,13 +92,22 @@ const Kanji = () => {
       </div>
 
       <p className="progress-info">
-        Kanji {currentIndex + 1} of {kanji.length}
+        Kanji {currentIndex + 1} of {kanji.length} • Studied: {studied}
       </p>
 
       {current && (
         <>
           <div className="kanji-card">
-            <div className="kanji-character">{current.character}</div>
+            <div className="kanji-character">
+              {current.character}
+              <button 
+                className="audio-btn" 
+                onClick={() => speak(current.kunyomi.split('、')[0])}
+                title="Listen"
+              >
+                🔊
+              </button>
+            </div>
             
             <div className="kanji-info">
               <div className="kanji-info-item">

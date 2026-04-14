@@ -7,6 +7,17 @@ const Navbar = () => {
 
   return (
     <nav className="navbar">
+      <button 
+        className="dark-toggle" 
+        onClick={() => {
+          const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+          document.documentElement.setAttribute('data-theme', isDark ? 'light' : 'dark');
+          localStorage.setItem('theme', isDark ? 'light' : 'dark');
+        }}
+        style={{ marginLeft: 'auto', background: 'none', border: 'none', cursor: 'pointer', fontSize: '1.2rem' }}
+      >
+        🌙
+      </button>
       <div className="navbar-inner">
         <Link to="/" className="navbar-logo">
           <span>🇯🇵</span> Nihongo<span>BTCH</span>
