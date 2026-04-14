@@ -12,6 +12,8 @@ const Kanji = () => {
   const [feedback, setFeedback] = useState(null);
   const [studied, setStudied] = useState(0);
   const [searchTerm, setSearchTerm] = useState('');
+  const [showHint, setShowHint] = useState(false);
+  const [mode, setMode] = useState('practice'); // 'practice' or 'review'
 
   const kanjiData = {
     n3: kanjiN3,
@@ -49,6 +51,13 @@ const Kanji = () => {
     }
   };
 
+  const getHint = () => {
+    if (!current) return '';
+    const kunyomi = current.kunyomi.split('、')[0];
+    const firstReading = kunyomi.charAt(0);
+    return `Starts with "${firstReading}" sound`;
+  };
+
   const checkAnswer = () => {
     if (!current) return;
     
@@ -70,6 +79,7 @@ const Kanji = () => {
       setShowAnswer(false);
       setUserInput('');
       setFeedback(null);
+      setShowHint(false);
     } else {
       const shuffled = [...kanji].sort(() => Math.random() - 0.5);
       setKanji(shuffled);
@@ -77,6 +87,7 @@ const Kanji = () => {
       setShowAnswer(false);
       setUserInput('');
       setFeedback(null);
+      setShowHint(false);
     }
   };
 
@@ -112,6 +123,8 @@ const Kanji = () => {
 
       <p className="progress-info">
         Kanji {currentIndex + 1} of {kanji.length} • Studied: {studied}
+        <br />
+        <small style={{ opacity: 0.7 }}>💡 Use hints if you're stuck!</small>
       </p>
 
       {current ? (
@@ -152,6 +165,19 @@ const Kanji = () => {
               </div>
             )}
 
+            {showHint && !showAnswer && (
+              <div style={{
+                marginTop: '12px',
+                padding: '12px',
+                background: '#FFF3E0',
+                borderRadius: '8px',
+                color: '#E65100',
+                textAlign: 'center'
+              }}>
+                💡 Hint: {getHint()}
+              </div>
+            )}
+
             {!showAnswer && (
               <>
                 <input
@@ -164,7 +190,10 @@ const Kanji = () => {
                 />
                 <p className="kanji-hint">Type the reading in hiragana (hint: kun'yomi)</p>
                 
-                <div style={{ display: 'flex', gap: '12px', justifyContent: 'center' }}>
+                <div style={{ display: 'flex', gap: '12px', justifyContent: 'center', flexWrap: 'wrap' }}>
+                  <button className="btn btn-secondary" onClick={() => setShowHint(!showHint)}>
+                    💡 {showHint ? 'Hide Hint' : 'Show Hint'}
+                  </button>
                   <button className="btn btn-secondary" onClick={handleReveal}>
                     Show Answer
                   </button>

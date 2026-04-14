@@ -14,11 +14,17 @@ const Progress = () => {
       n1: { studied: 0, correct: 0, total: 500 },
     },
   });
+  const [showAllTime, setShowAllTime] = useState(false);
 
   useEffect(() => {
     const saved = localStorage.getItem('nihongo_progress');
     if (saved) {
-      setStats(JSON.parse(saved));
+      const parsed = JSON.parse(saved);
+      setStats(prev => ({
+        ...prev,
+        ...parsed,
+        bestStreak: parsed.bestStreak || prev.bestStreak
+      }));
     }
   }, []);
 
@@ -26,8 +32,16 @@ const Progress = () => {
     ? Math.round((stats.correctAnswers / stats.totalStudied) * 100) 
     : 0;
 
+  const getLevelProgress = (level) => {
+    const data = stats.byLevel?.[level] || { studied: 0, correct: 0 };
+    return {
+      ...data,
+      accuracy: data.studied > 0 ? Math.round((data.correct / data.studied) * 100) : 0
+    };
+  };
+
   const resetProgress = () => {
-    if (window.confirm('Are you sure you want to reset all progress?')) {
+    if (window.confirm('Are you sure you want to reset all progress? This cannot be undone.')) {
       localStorage.removeItem('nihongo_progress');
       setStats({
         totalStudied: 0,
@@ -35,7 +49,7 @@ const Progress = () => {
         wrongAnswers: 0,
         streakDays: 0,
         lastStudied: null,
-        bestStreak: 0,
+        bestStreak: stats.bestStreak,
         byLevel: {
           n3: { studied: 0, correct: 0, total: 500 },
           n2: { studied: 0, correct: 0, total: 500 },
@@ -53,6 +67,7 @@ const Progress = () => {
         <div className="progress-card">
           <h3>Total Studied</h3>
           <div className="value">{stats.totalStudied}</div>
+          <small style={{ opacity: 0.7 }}>cards answered</small>
         </div>
         <div className="progress-card">
           <h3>Accuracy</h3>
@@ -79,42 +94,26 @@ const Progress = () => {
       <div className="level-progress">
         <h3>Progress by Level</h3>
         <div className="level-progress-grid">
-          <div className="level-item n3">
-            <div className="label">N3</div>
-            <div className="count">
-              {stats.byLevel.n3.studied} / {stats.byLevel.n3.total} words
-            </div>
-            <div className="progress-bar" style={{ marginTop: '8px' }}>
-              <div 
-                className="progress-bar-fill n3" 
-                style={{ width: `${(stats.byLevel.n3.studied / stats.byLevel.n3.total) * 100}%` }}
-              ></div>
-            </div>
-          </div>
-          <div className="level-item n2">
-            <div className="label">N2</div>
-            <div className="count">
-              {stats.byLevel.n2.studied} / {stats.byLevel.n2.total} words
-            </div>
-            <div className="progress-bar" style={{ marginTop: '8px' }}>
-              <div 
-                className="progress-bar-fill n2" 
-                style={{ width: `${(stats.byLevel.n2.studied / stats.byLevel.n2.total) * 100}%` }}
-              ></div>
-            </div>
-          </div>
-          <div className="level-item n1">
-            <div className="label">N1</div>
-            <div className="count">
-              {stats.byLevel.n1.studied} / {stats.byLevel.n1.total} words
-            </div>
-            <div className="progress-bar" style={{ marginTop: '8px' }}>
-              <div 
-                className="progress-bar-fill n1" 
-                style={{ width: `${(stats.byLevel.n1.studied / stats.byLevel.n1.total) * 100}%` }}
-              ></div>
-            </div>
-          </div>
+          {['n3', 'n2', 'n1'].map(level => {
+            const data = getLevelProgress(level);
+            return (
+              <div key={level} className={`level-item ${level}`}>
+                <div className="label">JLPT {level.toUpperCase()}</div>
+                <div className="count">
+                  {data.studied} / {data.total} words
+                </div>
+                <div style={{ marginTop: '8px', fontSize: '0.9rem', opacity: 0.8 }}>
+                  {data.accuracy}% accuracy
+                </div>
+                <div className="progress-bar" style={{ marginTop: '8px' }}>
+                  <div 
+                    className={`progress-bar-fill ${level}`} 
+                    style={{ width: `${(data.studied / data.total) * 100}%` }}
+                  ></div>
+                </div>
+              </div>
+            );
+          })}
         </div>
       </div>
 
@@ -123,15 +122,21 @@ const Progress = () => {
         <p style={{ color: '#757575', marginTop: '8px' }}>
           {stats.lastStudied ? `Last studied: ${stats.lastStudied}` : 'No study sessions yet'}
         </p>
+        {stats.totalStudied > 0 && (
+          <p style={{ color: '#757575', marginTop: '4px', fontSize: '0.9rem' }}>
+            {stats.correctAnswers} correct out of {stats.totalStudied} total
+          </p>
+        )}
       </div>
 
-      <button 
-        className="btn btn-secondary" 
-        style={{ marginTop: '24px', background: '#E53935' }}
-        onClick={resetProgress}
-      >
-        🗑️ Reset Progress
-      </button>
+      <div style={{ display: 'flex', gap: '12px', justifyContent: 'center', marginTop: '24px', flexWrap: 'wrap' }}>
+        <button 
+          className="btn btn-secondary" 
+          onClick={resetProgress}
+        >
+          🗑️ Reset Progress
+        </button>
+      </div>
     </div>
   );
 };

@@ -1002,3 +1002,36 @@ input:focus {
     transform: translateY(0);
   }
 }
+/* Mobile responsive improvements */
+@media (max-width: 480px) {
+  .hero h1 { font-size: 1.75rem; }
+  .hero { padding: 24px 16px; }
+  .hero-buttons { flex-direction: column; gap: 12px; }
+  .hero-buttons .btn { width: 100%; }
+  
+  .flashcard-kanji { font-size: 5rem !important; }
+  .flashcard-kana { font-size: 1.5rem !important; }
+  .flashcard-meaning { font-size: 1.25rem !important; }
+  
+  .level-progress-grid { gap: 8px; }
+  .level-item { padding: 12px; }
+  
+  .quiz-kana { font-size: 2rem !important; }
+  .quiz-kanji { font-size: 3rem !important; }
+  
+  .kanji-character { font-size: 5rem !important; }
+  
+  .header-controls { flex-direction: column; gap: 8px; }
+  
+  .user-stats { gap: 16px; padding: 12px; }
+  .user-stat .stat-value { font-size: 1.25rem; }
+  
+  .progress-grid { grid-template-columns: repeat(2, 1fr) !important; }
+  .stats-summary { flex-direction: column; gap: 8px; }
+}
+
+/* Touch-friendly buttons */
+@media (hover: none) {
+  .action-btn { padding: 16px; }
+  .btn { padding: 14px 24px; }
+}
