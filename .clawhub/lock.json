@@ -1,0 +1,21 @@
+{
+  "version": 1,
+  "skills": {
+    "excel-studio": {
+      "version": "1.0.0",
+      "installedAt": 1776098271055
+    },
+    "doc-factory": {
+      "version": "1.0.0",
+      "installedAt": 1776098292727
+    },
+    "self-improvement": {
+      "version": "1.0.0",
+      "installedAt": 1776098286309
+    },
+    "self-learning": {
+      "version": "3.0.1",
+      "installedAt": 1776098296645
+    }
+  }
+}
